@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 import argparse
 import sys
+from datetime import datetime
 
 PRIME_BITS = 32
 
@@ -21,7 +22,6 @@ def generate_blum_prime(bits=256):
             return p
 
 
-from datetime import datetime
 
 def save_bits_to_file(bits, filename="bbs_output.txt"):
 

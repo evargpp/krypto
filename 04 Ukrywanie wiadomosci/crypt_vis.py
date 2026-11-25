@@ -12,6 +12,8 @@ Wymagana biblioteka:
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from pathlib import Path
+import argparse
+from datetime import datetime
 
 from stegano import (
     embed_message,
@@ -282,6 +284,105 @@ def main():
     SteganoPyApp(root)
     root.mainloop()
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        prog="crypt_vis.py",
+        description="Praktyczne wykorzystanie ukrywania informacji w plikach graficznych, implementacja wybranego algorytmu.",
+        epilog="Projekt zaliczeniowy Podstawy kryptografii, Bartosz Grabski 59233 '2026"
+
+    )
+
+    parser.add_argument(
+        "-O", "--output",
+        type=str,
+        default = "input.png",
+        help="Nazwa pliku *.png wyjściowego z załączoną wiadomością (domyślnie input.png)"
+    )
+
+    parser.add_argument(
+        "-I", "--input",
+        type=int,
+        default="output.png",
+        help="Nazwa pliku *.png wejściowego do załączenia wiadomości (domyślnie output.png)"
+    )
+
+    parser.add_argument(
+        "-s", "--show_capacity",
+        type=int,
+        help="Zwraca maksymalną dostępną pojemność obrazu *.png"
+    )
+
+    text_group = parser.add_argument_group(
+        "Treść wiadomości do zaszyfrowania",
+        "Wybierz formę oraz treść wiadomości do zaszyfrowania (domyślnie tekst)."
+    )
+
+    group_t = text_group.add_mutually_exclusive_group()
+
+    group_t.add_argument(
+        "-T", "--text",
+        type=str,
+        default="Przykładowa wiadomość do zaszyfrowania",
+        help="Treść wiadomości do zaszyfrowania (domyślnie jakiś jest)",
+        dest="text"
+    )
+
+    group_t.add_argument(
+        "-F", "--file",
+        type=str,
+        default="Przykładowa wiadomość do zaszyfrowania",
+        help="Nazwa pliku z tekstem wiadomości do zaszyfrowania)",
+        dest="text"
+    )
+
+    orientation_group = parser.add_argument_group(
+        "Orientacja zapisanej wiadomości",
+        "Wybierz orientację zapisu wiadomości w obrazie (domyślnie pozioma)."
+    )
+
+    group = orientation_group.add_mutually_exclusive_group()
+
+    group.add_argument(
+        "-H", "--horizontal",
+        dest="orientation",
+        action="store_const",
+        const="horizontal",
+        help="Orientacja pozioma (domyślna)"
+    )
+
+    group.add_argument(
+        "-V", "--vertical",
+        dest="orientation",
+        action="store_const",
+        const="vertical",
+        help="Orientacja pionowa"
+    )
+
+    parser.set_defaults(orientation="horizontal")
+
+    localization_group = parser.add_argument_group(
+        "Lokalizacja wiadomości w pliku",
+        "Wybierz lokalizację zapisu wiadomości w obrazie (domyślnie od początku, w pierwszych 32bitach zapisana długość wiadomości)."
+    )
+
+    localization_group.add_argument(
+        "-S", "--start",
+        type=int,
+        default=0,
+        help="Bajt startowy początku wiadomości (domyślnie 0)"
+    )
+
+    localization_group.add_argument(
+        "-L", "--length",
+        type=int,
+        default=0,
+        help="Długość wiadomości (domyślnie długość podanego łańcucha)"
+    )
+
+    return parser.parse_args()
+
 
 if __name__ == "__main__":
-    main()
+    args = parse_arguments()
+
+
